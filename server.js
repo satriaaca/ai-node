@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import path from "path";
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 
@@ -9,7 +10,6 @@ dotenv.config();
 const app = express();
 
 app.use(express.json({ limit: "10mb" }));
-app.use(express.static("public"));
 
 const openai = new OpenAI({
     // baseURL: "https://openrouter.ai/api/v1",
@@ -214,6 +214,8 @@ ${articleText}
         });
     }
 });
+
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
     res.sendFile(
