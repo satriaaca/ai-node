@@ -215,4 +215,14 @@ ${articleText}
     }
 });
 
+app.get("/", (req, res) => {
+    res.sendFile(
+        path.join(
+            process.cwd(),
+            "public",
+            "index.html"
+        )
+    );
+});
+
 export default app;
