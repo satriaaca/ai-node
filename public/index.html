@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intel News Analyzer</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, "Segoe UI", sans-serif;
+            background: #f5f7fb;
+            color: #1e293b;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 18px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #198754;
+            letter-spacing: .08em;
+            margin-bottom: 14px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #dbe3ec;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: .2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #198754;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, .12);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 350px;
+            line-height: 1.6;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 14px;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            background: #198754;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        button:hover {
+            background: #157347;
+        }
+
+        button:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #198754;
+            font-size: 14px;
+        }
+
+        #title {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        @media (max-width:768px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .copy-btn {
+            width: auto;
+            margin: 0;
+            padding: 8px 14px;
+            font-size: 13px;
+            border-radius: 8px;
+            background: #64748b;
+        }
+
+        .copy-btn:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>📰 Intel News Analyzer</h1>
+            <p>Paste URL berita dan analisis otomatis menggunakan AI</p>
+        </div>
+
+        <div class="card">
+            <div class="section-label">Input URL Berita</div>
+
+            <input id="url" type="text" placeholder="https://contoh.com/artikel-berita">
+
+            <button id="analyzeBtn" onclick="analyze()">
+                Analisis Berita
+            </button>
+
+            <div id="loading" class="loading">
+                Mengambil artikel dan menjalankan AI...
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-label">Judul Artikel</div>
+            <div id="title">-</div>
+        </div>
+
+        <div class="card">
+            <div class="result-header">
+                <div class="section-label">
+                    Hasil Analisis AI
+                </div>
+            
+                <button class="copy-btn" onclick="copyAnalysis()">
+                    📋 Copy
+                </button>
+            </div>
+            
+            <textarea id="analysis" readonly placeholder="Hasil analisis AI akan muncul di sini...">
+                </textarea>
+
+        </div>
+
+    </div>
+
+    <script>
+        async function analyze() {
+
+            const urlInput =
+                document.getElementById("url");
+
+            const titleEl =
+                document.getElementById("title");
+
+            const analysisEl =
+                document.getElementById("analysis");
+
+            const loadingEl =
+                document.getElementById("loading");
+
+            const buttonEl =
+                document.getElementById("analyzeBtn");
+
+            const url =
+                urlInput.value.trim();
+
+            if (!url) {
+                alert(
+                    "Masukkan URL berita terlebih dahulu."
+                );
+                return;
+            }
+
+            titleEl.innerText = "-";
+            analysisEl.value = "";
+
+            loadingEl.style.display = "block";
+
+            buttonEl.disabled = true;
+            buttonEl.innerText = "Memproses...";
+
+            try {
+
+                const response =
+                    await fetch("/api/analyze", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            url
+                        })
+                    });
+
+                const data =
+                    await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.error ||
+                        "Terjadi kesalahan pada server."
+                    );
+                }
+
+                titleEl.innerText =
+                    data.title || "-";
+
+                analysisEl.value =
+                    data.analysis ||
+                    "Analisis tidak tersedia.";
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Gagal memproses berita:\n\n" +
+                    error.message
+                );
+
+            } finally {
+
+                loadingEl.style.display = "none";
+
+                buttonEl.disabled = false;
+
+                buttonEl.innerText =
+                    "Analisis Berita";
+            }
+        }
+
+        async function copyAnalysis() {
+
+                const text =
+                    document.getElementById("analysis").value;
+
+                if (!text) {
+                    alert("Belum ada hasil analisis.");
+                    return;
+                }
+
+                try {
+
+                    await navigator.clipboard.writeText(text);
+
+                    const btn =
+                        document.querySelector(".copy-btn");
+
+                    btn.innerText = "✅ Tersalin";
+
+                    setTimeout(() => {
+                        btn.innerText = "📋 Copy";
+                    }, 2000);
+
+                } catch {
+
+                    document
+                        .getElementById("analysis")
+                        .select();
+
+                    document.execCommand("copy");
+
+                    alert("Berhasil disalin.");
+                }
+            }
+
+        document.getElementById("url")
+            .addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    analyze();
+                }
+            });
+    </script>
+
+</body>
+
+</html>

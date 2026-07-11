@@ -1,0 +1,19 @@
+{
+  "name": "intel-news-analyzer",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0",
+    "cheerio": "^1.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsdom": "^24.1.0",
+    "openai": "^4.52.0",
+    "rss-parser": "^3.13.0"
+  }
+}
