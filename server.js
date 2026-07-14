@@ -135,9 +135,9 @@ Bahwa pada hari [Hari ini] tanggal [Tanggal hari ini] [Fakta utama berita].
 Bahwa [Fakta berikutnya].
 
 (Ketentuan Bab I:
-- Total 5-7 poin.
+- Total 6-7 poin.
 - Setiap poin diawali "Bahwa".
-- Tiap poin 2-3 kalimat.
+- Tiap poin 3-4 kalimat.
 - Murni fakta tanpa opini.)
 
 II. SUMBER INFORMASI
