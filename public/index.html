@@ -164,19 +164,42 @@
             <p>Paste URL berita dan analisis otomatis menggunakan AI</p>
         </div>
 
-        <div class="card">
-            <div class="section-label">Input URL Berita</div>
-
-            <input id="url" type="text" placeholder="https://contoh.com/artikel-berita">
-
-            <button id="analyzeBtn" onclick="analyze()">
-                Analisis Berita
-            </button>
-
-            <div id="loading" class="loading">
-                Mengambil artikel dan menjalankan AI...
-            </div>
+<div class="card">
+        <div class="section-label">
+            Input URL Berita (Opsional)
         </div>
+        <input
+            id="url"
+            type="text"
+            placeholder="https://contoh.com/artikel-berita">
+
+        <div style="
+            text-align:center;
+            margin:16px 0;
+            color:#64748b;
+            font-size:13px;
+            font-weight:600;">
+            ATAU
+        </div>
+
+        <div class="section-label">
+            Input Teks Berita Manual
+        </div>
+
+        <textarea
+            id="articleText"
+            placeholder="Paste isi berita di sini apabila tidak menggunakan URL..."
+            style="min-height:220px;"></textarea>
+
+        <button id="analyzeBtn" onclick="analyze()">
+            Analisis Berita
+        </button>
+
+        <div id="loading" class="loading">
+            Mengambil artikel dan menjalankan AI...
+        </div>
+
+    </div>
 
         <div class="card">
             <div class="section-label">Judul Artikel</div>
@@ -207,6 +230,9 @@
             const urlInput =
                 document.getElementById("url");
 
+            const articleInput =
+                document.getElementById("articleText");
+
             const titleEl =
                 document.getElementById("title");
 
@@ -222,10 +248,15 @@
             const url =
                 urlInput.value.trim();
 
-            if (!url) {
+            const articleText =
+                articleInput.value.trim();
+
+            if (!url && !articleText) {
+
                 alert(
-                    "Masukkan URL berita terlebih dahulu."
+                    "Masukkan URL atau isi berita."
                 );
+
                 return;
             }
 
@@ -241,24 +272,31 @@
 
                 const response =
                     await fetch("/api/analyze", {
+
                         method: "POST",
+
                         headers: {
                             "Content-Type":
                                 "application/json"
                         },
+
                         body: JSON.stringify({
-                            url
+                            url,
+                            articleText
                         })
+
                     });
 
                 const data =
                     await response.json();
 
                 if (!response.ok || !data.success) {
+
                     throw new Error(
                         data.error ||
                         "Terjadi kesalahan pada server."
                     );
+
                 }
 
                 titleEl.innerText =
@@ -286,8 +324,8 @@
                 buttonEl.innerText =
                     "Analisis Berita";
             }
-        }
 
+        }
         async function copyAnalysis() {
 
                 const text =
@@ -323,11 +361,16 @@
                 }
             }
 
-        document.getElementById("url")
+            document.getElementById("url")
             .addEventListener("keypress", function (e) {
-                if (e.key === "Enter") {
+
+                if (
+                    e.key === "Enter" &&
+                    this.value.trim() !== ""
+                ) {
                     analyze();
                 }
+
             });
     </script>
 
