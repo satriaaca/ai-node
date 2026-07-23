@@ -138,9 +138,9 @@ Gunakan bahasa Indonesia formal, objektif, dan dinas.
                 openai.chat.completions.create({
                     model:
                         model ||
-                        "meta-llama/llama-4-scout-17b-16e-instruct",
+                        // "meta-llama/llama-4-scout-17b-16e-instruct",
                         // "deepseek/deepseek-chat-v3-0324",
-                        // "nvidia/nemotron-3-ultra-550b-a55b:free",
+                        "nvidia/nemotron-3-ultra-550b-a55b:free",
 
                     messages: [
                         {
